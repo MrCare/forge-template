@@ -1,0 +1,35 @@
+{
+  "name": "foundry-nextjs-template",
+  "version": "1.0.0",
+  "description": "Lightweight Foundry + Next.js template with Viem, RainbowKit, and shadcn/ui",
+  "packageManager": "pnpm@8.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "cd frontend && pnpm dev",
+    "build": "cd frontend && pnpm build",
+    "start": "cd frontend && pnpm start",
+    "lint": "cd frontend && pnpm lint",
+    "install-frontend": "cd frontend && pnpm install",
+    "setup": "pnpm install-frontend && forge install",
+    "clean": "rm -rf frontend/node_modules frontend/.next out cache"
+  },
+  "keywords": [
+    "foundry",
+    "nextjs",
+    "ethereum",
+    "viem",
+    "wagmi",
+    "rainbowkit",
+    "shadcn",
+    "template",
+    "pnpm"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

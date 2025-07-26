@@ -1,0 +1,119 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package managers
+package-lock.json
+yarn.lock
+.yarn-integrity
+.pnp
+.pnp.js
+# Keep pnpm-lock.yaml for reproducible builds
+# pnpm-lock.yaml
+
+# Build outputs
+out/
+cache/
+artifacts/
+frontend/.next/
+frontend/out/
+frontend/dist/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.example.local
+frontend/.env*
+!frontend/.env.example
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs and runtime data
+*.log
+logs/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage and testing
+coverage/
+*.lcov
+.nyc_output
+test/coverage/
+test/artifacts/
+
+# Foundry specific
+broadcast/
+!broadcast/*/31337/
+lib/
+.gitmodules
+deployments/
+typechain/
+
+# Next.js specific
+next-env.d.ts
+.next
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Cache directories
+.cache/
+.parcel-cache
+.eslintcache
+.npm
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Optional files
+.yarn-integrity
+.tern-port
+.dynamodb/
+.serverless/
+.fusebox/
+
+# Development tools
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# REPL history
+.node_repl_history
+
+# Build artifacts
+*.tgz
+*.tar.gz
+
+# Additional Hardhat files (if used alongside Foundry)
+artifacts
+cache_hardhat
