@@ -69,7 +69,7 @@ test/artifacts/
 # Foundry specific
 broadcast/
 !broadcast/*/31337/
-lib/
+/lib/
 .gitmodules
 deployments/
 typechain/
