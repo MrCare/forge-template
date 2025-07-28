@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Foundry + Next.js Template Setup Script
+# Foundry + Next.js + Database Template Setup Script
 
-echo "🚀 Setting up Foundry + Next.js Template..."
+echo "🚀 Setting up Foundry + Next.js + Database Template..."
 
 # Function to check if command exists
 command_exists() {
@@ -12,6 +12,15 @@ command_exists() {
 # Function to compare version numbers
 version_ge() {
     printf '%s\n%s\n' "$2" "$1" | sort -V -C
+}
+
+# Function to check if port is available
+check_port() {
+    if lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null ; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 echo "🔍 Checking prerequisites..."
@@ -110,17 +119,123 @@ if [ -d "frontend" ]; then
         echo "❌ Failed to install frontend dependencies with pnpm"
         exit 1
     fi
-    cd ..
     echo "✅ Frontend dependencies installed successfully with pnpm"
 else
     echo "❌ Frontend directory not found"
     exit 1
 fi
 
+# Setup database
+echo "🗄️ Setting up database..."
+echo "  Generating Prisma client..."
+if ! pnpm run db:generate; then
+    echo "❌ Failed to generate Prisma client"
+    exit 1
+fi
+
+echo "  Pushing database schema..."
+if ! pnpm run db:push; then
+    echo "❌ Failed to push database schema"
+    exit 1
+fi
+
+echo "  Seeding database with sample data..."
+if ! pnpm run db:seed; then
+    echo "❌ Failed to seed database"
+    exit 1
+fi
+
+echo "✅ Database setup complete"
+cd ..
+
+# Check if Anvil is already running
+if check_port 8545; then
+    echo "🔗 Starting Anvil local blockchain..."
+    # Start Anvil in background
+    anvil --port 8545 > anvil.log 2>&1 &
+    ANVIL_PID=$!
+    echo "  Anvil PID: $ANVIL_PID"
+    
+    # Wait for Anvil to start
+    echo "  Waiting for Anvil to start..."
+    sleep 3
+    
+    if ! check_port 8545; then
+        echo "✅ Anvil started successfully on port 8545"
+    else
+        echo "❌ Failed to start Anvil"
+        exit 1
+    fi
+else
+    echo "⚠️  Port 8545 is already in use (Anvil might be running)"
+fi
+
+# Deploy contracts
+echo "🚀 Deploying contracts..."
+DEPLOY_OUTPUT=$(forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast 2>&1)
+
+if [ $? -eq 0 ]; then
+    echo "✅ Contracts deployed successfully"
+    
+    # Extract contract address from deployment output
+    CONTRACT_ADDRESS=$(echo "$DEPLOY_OUTPUT" | grep -o '0x[a-fA-F0-9]\{40\}' | tail -1)
+    
+    if [ -n "$CONTRACT_ADDRESS" ]; then
+        echo "  Contract deployed at: $CONTRACT_ADDRESS"
+        
+        # Update contract address in frontend
+        echo "📝 Updating contract address in frontend..."
+        cd frontend
+        
+        # Update contracts.ts file
+        if [ -f "lib/contracts.ts" ]; then
+            # Create a backup
+            cp lib/contracts.ts lib/contracts.ts.backup
+            
+            # Update the contract address
+            sed -i.tmp "s/0x[a-fA-F0-9]\{40\}/$CONTRACT_ADDRESS/g" lib/contracts.ts
+            rm lib/contracts.ts.tmp
+            
+            echo "✅ Contract address updated in lib/contracts.ts"
+        fi
+        
+        # Create/update .env.local file
+        echo "NEXT_PUBLIC_CONTRACT_ADDRESS=$CONTRACT_ADDRESS" > .env.local
+        echo "✅ Contract address saved to .env.local"
+        
+        cd ..
+    else
+        echo "⚠️  Could not extract contract address from deployment output"
+    fi
+else
+    echo "❌ Failed to deploy contracts"
+    echo "$DEPLOY_OUTPUT"
+    exit 1
+fi
+
 echo "✅ Setup complete!"
 echo ""
-echo "🎯 Next steps:"
-echo "1. Start Anvil: anvil"
-echo "2. Deploy contracts: forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast"
-echo "3. Update contract address in frontend/lib/contracts.ts"
-echo "4. Start frontend: cd frontend && pnpm dev"
+echo "🎯 Your development environment is ready!"
+echo ""
+echo "📝 What was set up:"
+echo "  ✅ Foundry dependencies installed"
+echo "  ✅ Smart contracts compiled"
+echo "  ✅ Frontend dependencies installed"
+echo "  ✅ Database configured and seeded"
+echo "  ✅ Local blockchain started (Anvil)"
+echo "  ✅ Contracts deployed and configured"
+echo ""
+echo "🚀 Next steps:"
+echo "1. Start the frontend development server:"
+echo "   cd frontend && pnpm dev"
+echo ""
+echo "2. Open your browser to http://localhost:3000"
+echo ""
+echo "📋 Useful commands:"
+echo "  • View database: cd frontend && pnpm run db:studio"
+echo "  • Check Anvil logs: tail -f anvil.log"
+echo "  • Stop Anvil: pkill -f anvil"
+echo "  • Reset database: cd frontend && pnpm run db:reset"
+echo ""
+echo "🔗 Contract Address: $CONTRACT_ADDRESS"
+echo "🗄️  Database: frontend/dev.db (SQLite)"

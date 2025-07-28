@@ -1,0 +1,22 @@
+// This is your Prisma schema file for PostgreSQL
+// Copy this to schema.prisma when you want to use PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Counter Operation Tracking Model
+model CounterOperation {
+  id        String   @id @default(cuid())
+  operation String   // "increment", "decrement", "set"
+  value     Int?     // For set operations, stores the value
+  timestamp DateTime @default(now())
+  txHash    String?  // Transaction hash from blockchain
+  
+  @@map("counter_operations")
+}

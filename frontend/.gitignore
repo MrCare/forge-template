@@ -48,3 +48,5 @@ next-env.d.ts
 # Temporary folders
 tmp
 temp
+
+/generated/prisma

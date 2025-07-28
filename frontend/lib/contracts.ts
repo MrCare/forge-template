@@ -1,7 +1,11 @@
+/*
+ * @Author: Mr.Car
+ * @Date: 2025-07-28 19:50:25
+ */
 import { type Address } from 'viem';
 
 // Update these addresses after deployment
-export const COUNTER_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3' as Address; // Default Anvil first deployment
+export const COUNTER_ADDRESS = '0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d' as Address; // Default Anvil first deployment
 
 export const COUNTER_ABI = [
   {

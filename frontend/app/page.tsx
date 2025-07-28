@@ -6,18 +6,18 @@ import { Counter } from '@/components/counter';
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Foundry + Next.js Template
+            Foundry + Next.js + Database Template
           </h1>
           <p className="text-lg text-gray-600 mb-8">
-            A lightweight, production-ready template for building decentralized applications
+            A full-stack template with blockchain and database integration
           </p>
           <ConnectButton />
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-2">
           <div className="space-y-6">
             <div className="bg-white rounded-lg p-6 shadow-md">
               <h2 className="text-xl font-semibold mb-4">🔧 Foundry</h2>
@@ -34,6 +34,16 @@ export default function Home() {
                 <li>• App Router with React Server Components</li>
                 <li>• TypeScript for type safety</li>
                 <li>• Optimized performance and SEO</li>
+              </ul>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h2 className="text-xl font-semibold mb-4">🗄️ Database</h2>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li>• Prisma ORM with type safety</li>
+                <li>• SQLite for development</li>
+                <li>• PostgreSQL for production</li>
+                <li>• Counter operation tracking</li>
               </ul>
             </div>
 
@@ -55,7 +65,7 @@ export default function Home() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
-            Ready to build the next generation of decentralized applications
+            Ready to build the next generation of decentralized applications with database integration
           </p>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { useCounter } from '@/hooks/useCounter';
 
 export function Counter() {
   const [inputValue, setInputValue] = useState('');
+  const [totalOperations, setTotalOperations] = useState(0);
   
   const {
     count,
@@ -23,6 +24,25 @@ export function Counter() {
     refetchCount,
   } = useCounter();
 
+  // Fetch total operations count
+  const fetchOperationsCount = async () => {
+    try {
+      const response = await fetch('/api/stats');
+      const data = await response.json();
+      setTotalOperations(data.stats.total);
+    } catch (error) {
+      console.error('Failed to fetch operations count:', error);
+    }
+  };
+
+  const handleIncrement = () => {
+    increment();
+  };
+
+  const handleDecrement = () => {
+    decrement();
+  };
+
   const handleSetNumber = () => {
     if (inputValue) {
       setNumber(BigInt(inputValue));
@@ -30,12 +50,19 @@ export function Counter() {
     }
   };
 
-  // Refetch count when transaction is confirmed
+  // Refetch count and operations when transaction is confirmed
   useEffect(() => {
     if (isConfirmed) {
       refetchCount();
+      // Delay to ensure database operation is recorded
+      setTimeout(fetchOperationsCount, 500);
     }
   }, [isConfirmed, refetchCount]);
+
+  // Initial fetch of operations count
+  useEffect(() => {
+    fetchOperationsCount();
+  }, []);
 
   const isLoading = isPending || isConfirming;
 
@@ -53,18 +80,21 @@ export function Counter() {
           <p className="text-3xl font-bold">
             {isCountLoading ? '...' : count?.toString() || '0'}
           </p>
+          <p className="text-lg text-cyan-500 mt-1">
+            Total Operations: {totalOperations}
+          </p>
         </div>
         
         <div className="flex gap-2">
           <Button 
-            onClick={increment} 
+            onClick={handleIncrement} 
             disabled={isLoading}
             className="flex-1"
           >
             {isLoading ? 'Processing...' : '+1'}
           </Button>
           <Button 
-            onClick={decrement} 
+            onClick={handleDecrement} 
             disabled={isLoading}
             variant="outline"
             className="flex-1"
